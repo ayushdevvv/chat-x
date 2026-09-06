@@ -25,13 +25,14 @@ io.on('connection', (socket) => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap))
 
     socket.on("disconnect", () => {
+        if (userId) {
+            delete userSocketMap[userId];
+        }
 
-        if (userId) delete userSocketMap(userId)
-
-        io.emit("getOnlineUsers", Object.keys(userSocketMap))
-    })
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
 
 })
 
 
-export {io,server,app,getSocketIdByUserId}
+export { io, server, app, getSocketIdByUserId }

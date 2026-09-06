@@ -1,8 +1,9 @@
 import "dotenv/config";
 
 import mongoose from "mongoose";
-import { connectDB } from "../db/db.js";
-import User from "../models/user.model.js";
+import connectDb from "../db/db.js";
+import { User } from "../models/auth/user.model.js";
+
 const seedUsers = [
   ["seed_arjun_sharma", "Arjun Sharma", "arjun.sharma@example.com", "https://i.pravatar.cc/150?img=1"],
   ["seed_aarav_verma", "Aarav Verma", "aarav.verma@example.com", "https://i.pravatar.cc/150?img=2"],
@@ -27,30 +28,35 @@ const seedUsers = [
 ];
 
 async function seedDatabase() {
-  await connectDB();
+  try {
+    await connectDb();
 
-  const result = await User.bulkWrite(
-    seedUsers.map(([clerkId, fullName, email, profilePic]) => ({
-      updateOne: {
-        filter: { clerkId },
-        update: {
-          $set: { clerkId, fullName, email, profilePic },
+    const result = await User.bulkWrite(
+      seedUsers.map(([clerkId, name, email, profilePic]) => ({
+        updateOne: {
+          filter: { clerkId },
+          update: {
+            $set: {
+              clerkId,
+              name,
+              email,
+              profilePic,
+            },
+          },
+          upsert: true,
         },
-        upsert: true,
-      },
-    })),
-  );
+      }))
+    );
 
-  console.log(
-    `Seeded users. Inserted: ${result.upsertedCount}, updated: ${result.modifiedCount}, matched: ${result.matchedCount}`,
-  );
+    console.log(
+      `Seed complete! Inserted: ${result.upsertedCount}, Updated: ${result.modifiedCount}, Matched: ${result.matchedCount}`
+    );
+  } catch (error) {
+    console.error("Seed failed:", error);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.connection.close();
+  }
 }
 
-seedDatabase()
-  .catch((error) => {
-    console.error("Failed to seed users:", error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await mongoose.connection.close();
-  });
+seedDatabase();

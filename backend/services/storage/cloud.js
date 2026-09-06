@@ -5,7 +5,7 @@ const imagekit = new Imagekit({
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 })
 
-function hasImagekitConfig(){
+function hasImageKitConfig(){
   return Boolean(process.env.IMAGEKIT_PRIVATE_KEY );
 }
 
@@ -18,7 +18,7 @@ function createFileName(originalName="upload"){
 
 async function uploadChatMedia(file) {
 
-  const fileName = createFileName(file.originalName)
+  const fileName = createFileName(file.originalname)
 
   const result = await imagekit.files.upload({
 
@@ -31,4 +31,4 @@ async function uploadChatMedia(file) {
 }
 
 
-export { uploadChatMedia, hasImagekitConfig }
+export { uploadChatMedia, hasImageKitConfig }
