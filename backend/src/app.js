@@ -10,11 +10,7 @@ import {app} from '../services/events/socket.js'
 app.use("/api/webhooks/clerk",express.raw({ type: 'application/json' }),clerkWebhook)
 app.use(express.json())
 app.use(cookieParser())
-app.use(
-  clerkMiddleware({
-    authorizedParties: [process.env.CLIENT_URL],
-  }),
-);
+app.use(clerkMiddleware())
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
