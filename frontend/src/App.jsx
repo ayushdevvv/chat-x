@@ -6,7 +6,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
 
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -14,9 +14,14 @@ function App() {
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (isSignedIn) checkAuth();
-    else clearAuth();
-  }, [checkAuth, clearAuth, isLoaded, isSignedIn]);
+    if (isSignedIn) {
+      getToken().then((token) => {
+        checkAuth(token);
+      });
+    } else {
+      clearAuth();
+    }
+  }, [checkAuth, clearAuth, getToken, isLoaded, isSignedIn]);
 
   return (
     <ThemeProvider>

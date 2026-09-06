@@ -6,19 +6,18 @@ export async function authUser(req, res, next) {
     const { userId } = getAuth(req);
 
     if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const user = await User.findOne({ clerkId: userId });
 
     if (!user) {
-      res.status(404).json({ message: "User profile is not synced yet" });
-      return;
+      return res.status(404).json({
+        message: "User profile is not synced yet",
+      });
     }
 
     req.user = user;
-
     next();
   } catch (error) {
     console.error("Error in protectRoute middleware:", error.message);
